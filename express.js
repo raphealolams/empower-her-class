@@ -16,6 +16,19 @@ connect()
 
     app.use("/v1", routes);
 
+    app.use((req, res, next) => {
+      const error = new Error('Not Found')
+      error.status = 404
+      next(error)
+    })
+
+    app.use((error, req, res, next) => {
+      return res.status(error.status || 500).json({
+        message: error.message || 'Internal Server Error',
+        status: false,
+        data: error
+      })
+    })
     // set response headers
     app.use((req, res, next) => {
       res.header("Content-Type", "application/json");
