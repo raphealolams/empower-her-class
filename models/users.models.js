@@ -35,7 +35,6 @@ const UserSchema = new Schema({
     }
 })
 
-
 UserSchema.pre('save', function (next) {
     if (this.isNew || this.isModified('password')) {
         this.password = bcrypt.hashSync(this.password, 12)
@@ -43,6 +42,14 @@ UserSchema.pre('save', function (next) {
 
     next()
 })
+
+UserSchema.statics.findOneByEmail = function(query){
+    return this.findOne(query)
+}
+
+UserSchema.methods.comparePasswordHash = function(password) {
+    return bcrypt.compareSync(password, this.password)
+}
 
 const UserModel = mongoose.model('users', UserSchema)
 
